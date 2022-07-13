@@ -4,35 +4,39 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DiProjTelegramBot extends TelegramLongPollingBot {
 
     private Update update;
+    private Map<Long, MessageParser> messageParserPool = new HashMap<>();
 
     public DiProjTelegramBot(){
 
     }
 
     public String getBotUsername() {
-        return "DiProjBot";
+        return "";
     }
 
     public String getBotToken() {
-        return "5469647346:AAFhghCJDWoGmXs_VZdxpNHPO0hDWQND2Zs";
+        return "";
     }
 
     public void onUpdateReceived(Update update) {
         this.update = update;
-        String text = update.getMessage().getText().toLowerCase();
-        System.out.println(text);
-        Record record = new Record(Double.parseDouble(text));
-        if (record.save()){
-            sendMessage("OK");
-        } else {
-            sendMessage("Wrong");
+        if (update.hasMessage()) {
+            String text = update.getMessage().getText().toLowerCase();
+            Long id = update.getMessage().getChatId();
+            if (!messageParserPool.containsKey(id)){
+                messageParserPool.put(id, new MessageParser(this, id));
+            }
+            MessageParser messageParser = messageParserPool.get(id);
+            System.out.println(text);
+            messageParser.putMessage(text);
         }
-
     }
 
     private void sendMessage(String text) {
@@ -49,6 +53,10 @@ public class DiProjTelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
 
+    }
+
+    public void readToAnswer(String msg){
+        sendMessage(msg);
     }
 
 }
