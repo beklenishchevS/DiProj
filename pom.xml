@@ -8,10 +8,6 @@
     <artifactId>DiProj</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <properties>
-        <telegram.version>5.0.1</telegram.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
